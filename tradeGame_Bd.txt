@@ -1,0 +1,116 @@
+ 
+
+ tradeGame
+-----------
+
+ The client should have jsons to send data:
+
+ user-data-json
+ product-data-json
+
+ 
+register.lua
+
+ email , pass
+
+registerProfile.lua
+
+fields : name , sobrename , paypalemail ( optional ) , state , city , celphone , cpf 
+
+mainFloor.lua 
+
+Busca por codigo " insira o codigo do produto aqui "
+Busca avançada
+
+100 products in list 
+
+
+client requisitions
+
+ register.lua -> register.php
+ registerProfile.lua -> registerProfile.php
+ registerProd.lua -> registerProd.php
+ game.lua -> registerMove.php
+ menuMyProd.lua -> changeMyProd.php
+ menuProd -> getProdInfo.php
+ mainFloor.lua -> searchCodeProds.php
+ advancedSearch.lua -> andvancedSearch.php
+ profile.lua -> getProfile.php
+ myProducts.lua -> getProducts.php
+ myBets -> getBets.php
+
+
+------------
+
+ User
+
+ id - pk
+ credit - 
+ name
+ pass
+ email
+ cpf
+ paypal
+ phone
+ country
+ state
+ city
+ hash
+ hash_outra
+ subscribe - fk
+ products - fk
+ evaluation -
+ 
+
+------------
+
+ Products 
+
+ id - pk
+ code
+ owner_id - fk
+ city
+ state
+ title
+ describ
+ photoLib - fk
+ photoLibBlob - fk
+ value
+ amount
+ player_id - fk
+ winner_id - fk
+
+ 
+ -----------
+
+ photoLib
+
+  icon - 
+  path
+  title
+  
+
+-----------
+ photoBlob
+
+  icon - 
+  
+ -----------
+
+ subscribes
+ 
+ id
+ iduser - fk
+ type
+ date
+ 
+
+ 
+
+ 
+ 
+
+ 
+ 
+ 
+  
