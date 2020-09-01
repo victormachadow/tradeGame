@@ -401,7 +401,7 @@ function scene:create( event )
     sceneGroup:insert( addProdText )
     sceneGroup:insert( advSearchText )
     bkg:addEventListener( "touch" , touchListener )
-    hideMenu:addEventListener( "touch" , touchListener )--
+    hideMenu:addEventListener( "touch" , touchListener )-----
 
 end
 
