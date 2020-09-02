@@ -81,19 +81,33 @@ end
      end
  end
 
+ local function slideListener(event) --Generic multilistener function for object list
+
+    if ( event.phase == "began" ) then
+     --display.getCurrentStage():setFocus( event.target, event.id )
+     print(event.target.id)
+     icons[event.target.id].alpha = 0.5
+    
+    elseif ( event.phase == "ended" or event.phase=="cancelled") then
+     print(event.target.id)
+     icons[event.target.id].alpha = 1.0
+     
+    end
+    return true
+ end
+
  local function showSlide( event )
      
-
     if ( "ended" == event.phase ) then
      if(slideActive == false)then
         --code
         slideActive = true
         stateField = widget.newScrollView
         {
-            hideBackground = true ,
-            width = quad.width-100,
+            hideBackground = true,
+            width = stateButton.width,
             height = 400,
-            scrollWidth = quad.width-100 ,
+            scrollWidth = stateButton.width,
             scrollHeight = 400,
 			horizontalScrollDisabled = true,
             --verticalScrollDisabled = true
@@ -105,17 +119,17 @@ end
         aux = 30
         aux2 = 0
         for i = 1, 27 do
-               icons[i] = display.newRect( stateField.x - 100  , aux+aux2  , quad.width - 200 , 50 )
+               icons[i] = display.newRect( stateField.x - 200  , aux+aux2  , stateButton.width , 50 )
                icons[i]:setFillColor( math.random(), math.random(), math.random() )
                labels[i]=display.newText( i , icons[i].x , icons[i].y , native.systemFon, 20 )
                labels[i]:setFillColor( rgb.color( "black" ) )
                stateField:insert( icons[i] ) 
                stateField:insert(labels[i])
-               icons[i].alpha = 0.8
+               icons[i].alpha = 1.0
                icons[i].id = i
                aux2 = 60
                aux = icons[i].y
-               --icons[i]:addEventListener( "touch", iconListener )
+               icons[i]:addEventListener( "touch", slideListener )
                		   
         end
     end
@@ -123,6 +137,33 @@ end
 
         end
     
+    end
+
+    local function touchListener( event ) -- Generic multilistener function
+ 
+        --print( "Unique touch ID: " .. tostring(event.id) )
+     
+        if ( event.phase == "began" ) then
+            
+            --event.target.alpha = 0.5
+            -- Set focus on object using unique touch ID
+            display.getCurrentStage():setFocus( event.target, event.id )
+     
+            if( event.target.id == "bkg" )then
+             if(slideActive)then
+             display.remove(stateField)
+             stateField = nil
+             slideActive = false
+             end
+            end
+        elseif ( event.phase == "ended" or event.phase == "cancelled" ) then
+            
+            
+            -- Release focus on object
+
+            display.getCurrentStage():setFocus( event.target, nil )
+        end
+        return true
     end
 
  
@@ -149,6 +190,8 @@ end
      --bkg:setReferencePoint( display.CenterReferencePoint )
      bkg.x = display.contentCenterX
      bkg.y = display.contentCenterY
+     bkg.id = "bkg"
+     bkg:addEventListener( "touch", touchListener )
      sceneGroup:insert( bkg )
  
      quad = display.newRect( centerX , centerY , 450  , _H-100 -_H/10 )
@@ -162,7 +205,7 @@ end
      accIcon:translate( centerX , header.y + accIcon.height )
      sceneGroup:insert(accIcon)
      
-     headerTagText = display.newText( "localização", centerX , header.y , native.systemFontBold, 25 )
+     headerTagText = display.newText( "Localização", centerX , header.y , native.systemFontBold, 25 )
      headerTagText:setFillColor( rgb.color( "white" ) )
      sceneGroup:insert(headerTagText)
  
