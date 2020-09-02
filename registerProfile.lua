@@ -26,20 +26,14 @@ local bkg
 local userNameField -- name
 local completeNameField
 local cpfField
---local emailPaypalField
 local phoneNumberField
 local phoneNumberField2 -- optional
 local genderFieldH -- radio button
+ -- x --
 local genderFieldM -- radio button
 local genderText
 local genderHText
 local genderMText
-local cepField --optional
-local adressField
-local numberField
-local complementField
-local stateField -- state list
-local cityField
 local quad
 local skipButton
 local nextButton
@@ -67,7 +61,7 @@ local function listenerNext( event )
         if(globalData.devUi)then
             display.remove(sceneGroup)
             composer.removeScene("registerProfile")
-            composer.gotoScene("mainFloor", options )
+            composer.gotoScene("registerLocation", options )
 
         end
     end
@@ -102,12 +96,12 @@ function scene:create( event )
     quad:setFillColor( rgb.color( "white" ) )
     quad.alpha = 0.5
     sceneGroup:insert(quad)
-    accIcon = display.newImage( "pngs/sharp_account_circle_black_48dp_96.png" )
-    accIcon:translate( centerX , centerY-300 )
-    sceneGroup:insert(accIcon)
     header = display.newRect( quad.x , centerY-quad.height/2*scaleY  , quad.width , 60*scaleY )
     header:setFillColor( rgb.color( "black" ) )
     sceneGroup:insert(header)
+    accIcon = display.newImage( "pngs/sharp_account_circle_black_48dp_96.png" )
+    accIcon:translate( centerX , header.y + accIcon.height )
+    sceneGroup:insert(accIcon)
     headerTagText = display.newText( "Complete seu perfil", centerX , header.y , native.systemFontBold, 25 )
     headerTagText:setFillColor( rgb.color( "white" ) )
     sceneGroup:insert(headerTagText)
