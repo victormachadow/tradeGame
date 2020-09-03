@@ -33,6 +33,7 @@
  local quad
  local skipButton
  local nextButton
+ local confirmButton
  local localIcon
  local headerTagText
  local header
@@ -95,12 +96,24 @@ end
  local function slideListener(event) --Generic multilistener function for object list
     
     if ( event.phase == "began" ) then
+      if(previousClicked == nil )then 
+    
+        previousClicked = icons[event.target.id]
+        atualClicked = icons[event.target.id]
+        atualClicked.alpha = 0.5
+        print("previousID :"..previousClicked.id)
+        print("atualID :"..atualClicked.id)
+        previousClicked = atualClicked
       
+      elseif(previousClicked ~= nil )then
+       previousClicked.alpha = 1
        atualClicked = icons[event.target.id]
-       previousClicked = atualClicked
        atualClicked.alpha = 0.5
-       previousClicked = icons[event.target.id] -- set the atual object clicked to previousClicked always that this fired  
-      
+       print("previousID :"..previousClicked.id)
+       print("atualID :"..atualClicked.id)
+       previousClicked = atualClicked
+       --previousClicked = icons[event.target.id] -- set the atual object clicked to previousClicked always that this fired  
+      end
     
     elseif ( event.phase == "moved" ) then
          print("moved")
@@ -116,10 +129,10 @@ end
 
     elseif ( event.phase == "ended" or event.phase=="cancelled") then
      print(event.target.id)
-     --icons[event.target.id].alpha = 1.0
-     previousClicked.alpha = 1.0
+     
      
     end
+    
     return true
  end
 
@@ -163,19 +176,29 @@ end
                 
                		   
         end
-    end
         sceneGroup:insert( stateField )
-
-         arrowUp =  display.newImage( "pngs/sharp_arrow_drop_up_black_48dp_96.png" )
-         arrowUp:translate( centerX , stateField.y - stateField.height/2 )
-         --arrowUp:addEventListener( "touch", iconListener )
-         sceneGroup:insert(arrowUp)
-         arrowDown = display.newImage( "pngs/sharp_arrow_drop_down_black_48_96.png" )
-         arrowDown:translate( centerX , stateField.y + stateField.height/2 )
-         --arrowDown:addEventListener( "touch", iconListener )
-         sceneGroup:insert(arrowDown)
+        confirmButton = widget.newButton(   -- customized settings 
+     {
+         label = "Confirma",
+         --onEvent =  listenerNext, -- listenerSkip
+         emboss = false,
+         font = native.systemFontBold ,
+         fontSize = 25 ,
+         -- Properties for a rounded rectangle button
+         shape = "rect",
+         width = stateButton.width*0.8,
+         height = _H/18,
+         fillColor = { default= { rgb.color( "black" ) } , over = { rgb.color( "gray" ) } },
+         labelColor = { default= { rgb.color( "white" ) } , over = { rgb.color( "white" ) } }
          
-
+     }
+ )
+        confirmButton.x = centerX
+        confirmButton.y = stateField.y + stateField.height/2 + confirmButton.height/2
+        sceneGroup:insert( confirmButton )
+    end --slideActive end if
+        
+         
         end
     
     end
@@ -194,6 +217,8 @@ end
              if(slideActive)then
              display.remove(stateField)
              stateField = nil
+             display.remove(confirmButton)
+             confirmButton = nil
              slideActive = false
              end
             end
