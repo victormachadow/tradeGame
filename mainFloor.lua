@@ -268,7 +268,7 @@ function scene:create( event )
     sceneGroup:insert( bkg )
     
     --sceneGroup:insert(bkg)
-    headerui = display.newRect( 0 , 0  , _W*2 , 300 )
+    headerui = display.newRect( centerX , 0  , _W , _H/3.2 )
     headerui:setFillColor( rgb.color( "black" ) )
     footer = display.newRect( 0 , _H  , _W*2 , 300 )
     footer:setFillColor( rgb.color( "white" ) )
@@ -368,7 +368,7 @@ function scene:create( event )
         onEvent = listenerMenuButton
     }
     menuBt.x = 50 
-    menuBt.y = 80
+    menuBt.y = _H/10
 
     addProdBt = widget.newButton {
         width = 70,

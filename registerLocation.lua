@@ -39,6 +39,10 @@
  local icons = {}
 local labels = {}
 local slideActive = false
+local arrowUp
+local arrowDown
+local previousClicked
+local atualClicked
  
  local options = {   -- Effects when scene changes
  effect = "slideRight",
@@ -57,12 +61,19 @@ local slideActive = false
     --print(id)
  
     if ( event.phase == "moved" ) then
-        local dx = math.abs( event.x - event.xStart ) 
-        if ( dx > 5 ) then
-            stateField:takeFocus( event ) 
-        end
-    elseif ( event.phase == "ended" ) then
        
+        --stateField:takeFocus( event )
+        print("eventx :"..event.x)
+        print("eventxStart :"..event.xStart)
+        local dx = math.abs( event.y - event.yStart ) 
+        if ( dx > 5 ) then
+        display.getCurrentStage():setFocus( event.target, event.id )
+        stateField:takeFocus( event ) 
+        end
+        
+    elseif ( event.phase == "ended" ) then
+        display.getCurrentStage():setFocus( nil )
+        
     end
     return true
 end
@@ -75,22 +86,38 @@ end
          if(globalData.devUi)then
              display.remove(sceneGroup)
              composer.removeScene("registerLocation")
-             composer.gotoScene("mainFloor", options )
+             composer.gotoScene("registerPayment", options )
  
          end
      end
  end
 
  local function slideListener(event) --Generic multilistener function for object list
-
-    if ( event.phase == "began" ) then
-     --display.getCurrentStage():setFocus( event.target, event.id )
-     print(event.target.id)
-     icons[event.target.id].alpha = 0.5
     
+    if ( event.phase == "began" ) then
+      
+       atualClicked = icons[event.target.id]
+       previousClicked = atualClicked
+       atualClicked.alpha = 0.5
+       previousClicked = icons[event.target.id] -- set the atual object clicked to previousClicked always that this fired  
+      
+    
+    elseif ( event.phase == "moved" ) then
+         print("moved")
+        --if(event.target.id=="sv")then
+         print("scroll moved")
+          local dx = math.abs( event.y - event.yStart ) 
+          if ( dx > 10 ) then
+          display.getCurrentStage():setFocus( event.target, event.id )
+          stateField:takeFocus( event ) 
+          end
+       -- end
+       
+
     elseif ( event.phase == "ended" or event.phase=="cancelled") then
      print(event.target.id)
-     icons[event.target.id].alpha = 1.0
+     --icons[event.target.id].alpha = 1.0
+     previousClicked.alpha = 1.0
      
     end
     return true
@@ -111,29 +138,43 @@ end
             scrollHeight = 400,
 			horizontalScrollDisabled = true,
             --verticalScrollDisabled = true
+            --listener = iconListener
         }
+        stateField.id ="sv"
         stateField.x = centerX
         stateField.y = stateButton.y + stateField.height/2 + stateButton.height/2
-        sceneGroup:insert(stateField)
+        --sceneGroup:insert( stateField ) 
         
-        aux = 30
+        aux = _H/32 --30
         aux2 = 0
         for i = 1, 27 do
-               icons[i] = display.newRect( stateField.x - 200  , aux+aux2  , stateButton.width , 50 )
-               icons[i]:setFillColor( math.random(), math.random(), math.random() )
+               icons[i] = display.newRect( stateField.x - 200  , aux+aux2  , stateButton.width , _H/19.2 )
+               --icons[i]:setFillColor( math.random(), math.random(), math.random() )
+               icons[i]:setFillColor( rgb.color( "white" ) )
                labels[i]=display.newText( i , icons[i].x , icons[i].y , native.systemFon, 20 )
                labels[i]:setFillColor( rgb.color( "black" ) )
                stateField:insert( icons[i] ) 
                stateField:insert(labels[i])
                icons[i].alpha = 1.0
                icons[i].id = i
-               aux2 = 60
+               aux2 = _H/17.4 --60
                aux = icons[i].y
                icons[i]:addEventListener( "touch", slideListener )
+                
                		   
         end
     end
-        
+        sceneGroup:insert( stateField )
+
+         arrowUp =  display.newImage( "pngs/sharp_arrow_drop_up_black_48dp_96.png" )
+         arrowUp:translate( centerX , stateField.y - stateField.height/2 )
+         --arrowUp:addEventListener( "touch", iconListener )
+         sceneGroup:insert(arrowUp)
+         arrowDown = display.newImage( "pngs/sharp_arrow_drop_down_black_48_96.png" )
+         arrowDown:translate( centerX , stateField.y + stateField.height/2 )
+         --arrowDown:addEventListener( "touch", iconListener )
+         sceneGroup:insert(arrowDown)
+         
 
         end
     
@@ -186,6 +227,7 @@ end
  
      --bkg = display.newImage( "pngs/green.jpg" )
      --sceneGroup:insert(bkg)
+     system.activate( "multitouch" )
      bkg = display.newImage( "pngs/green.jpg" )
      --bkg:setReferencePoint( display.CenterReferencePoint )
      bkg.x = display.contentCenterX

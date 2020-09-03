@@ -28,9 +28,14 @@
  local quad
  local skipButton
  local nextButton
+ local paymentButton
+ local receivementButton
  local accIcon
  local headerTagText
+ local topText
  local header
+ local headerTop
+ 
  
  local options = {   -- Effects when scene changes
  effect = "slideRight",
@@ -66,13 +71,7 @@
  -- create()
  function scene:create( event )
   
- --[[ A way to adjust the components sizes to 1080x1920 screen or whatever W x H screen is:
-  * getting the scaleX and scaleY by scaleX = _W/640 and scaleY = _H/960 , that is the original components size 
-  * multiplies the x , y component's sizes to scaleX and scaleY respectively 
-   -- NOT WORKS WELL --
- 
- --]]
- 
+
      local sceneGroup = self.view
  
      --bkg = display.newImage( "pngs/green.jpg" )
@@ -82,27 +81,77 @@
      bkg.x = display.contentCenterX
      bkg.y = display.contentCenterY
      sceneGroup:insert( bkg )
- 
-     quad = display.newRect( centerX , centerY , 450  , _H-100 -_H/10 )
+     referenceQuadY = 0
+     headerTop = display.newRect( centerX , 0 , _W , _H/6.2 )
+     headerTop:setFillColor( rgb.color( "black" ) )
+     topText = display.newText( "Utima etapa..", centerX , headerTop.y+headerTop.height/3.4 , native.systemFont, 30 )
+     sceneGroup:insert( headerTop )
+     sceneGroup:insert( topText )
+     quad = display.newRect( centerX , centerY-referenceQuadY , _W/2*1.8  , _H/2+50 )
      quad:setFillColor( rgb.color( "white" ) )
      quad.alpha = 0.5
      sceneGroup:insert(quad)
-     accIcon = display.newImage( "pngs/sharp_account_circle_black_48dp_96.png" )
-     accIcon:translate( centerX , centerY-300 )
-     sceneGroup:insert(accIcon)
-     header = display.newRect( quad.x , centerY-quad.height/2*scaleY  , quad.width , 60*scaleY )
+     header = display.newRect( quad.x , centerY-quad.height/2*scaleY - referenceQuadY , quad.width , 70*scaleY )
      header:setFillColor( rgb.color( "black" ) )
      sceneGroup:insert(header)
-     headerTagText = display.newText( "Complete seu perfil", centerX , header.y , native.systemFontBold, 25 )
+     accIcon = display.newImage( "pngs/sharp_payment_black_48dp_96.png" )
+     accIcon:translate( centerX , header.y + accIcon.height*1.3 )
+     sceneGroup:insert(accIcon)
+     headerTagText = display.newText( "Dados bancários", centerX , header.y , native.systemFont, 30 )
      headerTagText:setFillColor( rgb.color( "white" ) )
      sceneGroup:insert(headerTagText)
+
+     paymentButton =  widget.newButton(   -- customized settings 
+     {
+         label = "Adicionar forma de pagamento",
+         --onEvent =  listenerNext, -- listenerSkip
+         emboss = false,
+         id = "pay",
+         font = native.systemFontBold,
+         fontSize = 25 ,
+         -- Properties for a rounded rectangle button
+         shape = "rect",
+         width = _W/2*1.6,
+         height = 80,
+         fillColor = { default= { rgb.color( "white" ) } , over = { rgb.color( "gray" ) } },
+         labelColor = { default= { rgb.color( "black" ) } , over = { rgb.color( "white" ) } }
+         
+     }
+ )
+
+ paymentButton.x = centerX
+ paymentButton.y = accIcon.y+accIcon.height*1.2
+ sceneGroup:insert(paymentButton)
+ receivementButton = widget.newButton(   -- customized settings 
+ {
+     label = "Adicionar conta de recebimento",
+     --onEvent =  listenerNext, -- listenerSkip
+     emboss = false,
+     id = "rec",
+     font = native.systemFontBold,
+     fontSize = 25 ,
+     -- Properties for a rounded rectangle button
+     shape = "rect",
+     width = _W/2*1.6,
+     height = 80,
+     fillColor = { default= { rgb.color( "white" ) } , over = { rgb.color( "gray" ) } },
+     labelColor = { default= { rgb.color( "black" ) } , over = { rgb.color( "white" ) } }
+     
+ }
+)
+ receivementButton.x = centerX
+ receivementButton.y = paymentButton.y+paymentButton.height+35
+ sceneGroup:insert(receivementButton)
+
+
+     --receivementButton = 
  
      skipButton = widget.newButton(   -- customized settings 
      {
          label = "Pular",
          onEvent =  listenerNext, -- listenerSkip
          emboss = false,
-         font = native.systemFontBold ,
+         font = native.systemFontBold,
          fontSize = 25 ,
          -- Properties for a rounded rectangle button
          shape = "rect",
@@ -113,10 +162,10 @@
          
      }
  )
- skipButton.x = centerX - (quad.width/2 - 80)
- skipButton.y = centerY + (quad.height/2 - 55)
+ skipButton.x = centerX - (quad.width/2 - 80) 
+ skipButton.y = centerY + (quad.height/2 - 55) - referenceQuadY
  sceneGroup:insert(skipButton)
- nextButton = widget.newButton(   -- customized settings 
+ nextButton = widget.newButton(  -- customized settings 
      {
          label = "Avançar",
          onEvent = listenerNext,
@@ -133,98 +182,10 @@
      }
  )
  nextButton.x = centerX + (quad.width/2 - 80)
- nextButton.y = centerY + (quad.height/2 - 55)
+ nextButton.y = centerY + (quad.height/2 - 55) - referenceQuadY
  sceneGroup:insert(nextButton)
  
- local d = 35*scaleY -- Vertical distance between textfields
- userNameField = native.newTextField( centerX , accIcon.y+accIcon.height , quad.width - 100 , 50 )
- userNameField.text = "Nome"
- --userNameField:addEventListener( "userInput", passListener )
- --userNameField.hasBackground = false
- sceneGroup:insert(userNameField)
- completeNameField = native.newTextField( centerX , userNameField.y+userNameField.height + d , quad.width - 100 , 50 )
- completeNameField.text = "Seu nome completo"
- --userNameField:addEventListener( "userInput", passListener )
- --userNameField.hasBackground = false
- sceneGroup:insert(completeNameField)
- cpfField = native.newTextField( centerX , completeNameField.y+completeNameField.height + d , quad.width - 100 , 50 )
- cpfField.text = "Cpf ou Cnpj"
- --userNameField:addEventListener( "userInput", passListener )
- --userNameField.hasBackground = false
- sceneGroup:insert(cpfField)
  
- phoneNumberField = native.newTextField( centerX , cpfField.y+cpfField.height + d , quad.width - 100 , 50 )
- phoneNumberField.text = "Numero telefone 1"
- --userNameField:addEventListener( "userInput", passListener )
- --userNameField.hasBackground = false
- sceneGroup:insert(phoneNumberField)
- 
- phoneNumberField2 = native.newTextField( centerX , phoneNumberField.y+phoneNumberField.height + d , quad.width - 100 , 50 )
- phoneNumberField2.text = "Numero telefone 2"
- --userNameField:addEventListener( "userInput", passListener )
- --userNameField.hasBackground = false
- sceneGroup:insert(phoneNumberField2)
- genderText = display.newText( "Sexo :", centerX-180 , phoneNumberField2.y+phoneNumberField2.height + d , native.systemFont, 25 )
- genderText:setFillColor( rgb.color( "black" ) )
- sceneGroup:insert(genderText)
- 
- genderFieldH = widget.newSwitch(
-     {
-         style = "radio",
-         id = "masc",
-         initialSwitchState = false,
-         onPress = onSwitchPress
-     }
- )
- genderFieldH.x = genderText.x + genderText.width
- genderFieldH.y = phoneNumberField2.y+phoneNumberField2.height + d
- genderHText = display.newText( "Masculino", genderFieldH.x + 80 , phoneNumberField2.y+phoneNumberField2.height + d , native.systemFont, 25 )
- genderHText:setFillColor( rgb.color( "black" ) )
- sceneGroup:insert(genderFieldH)
- sceneGroup:insert(genderHText)
- 
- genderFieldM = widget.newSwitch(
-     {
-         style = "radio",
-         id = "fem",
-         initialSwitchState = false,
-         onPress = onSwitchPress
-     }
- )
- genderFieldM.x = genderHText.x + genderHText.width/2 + 30
- genderFieldM.y = phoneNumberField2.y+phoneNumberField2.height + d
- genderMText = display.newText( "Feminino", genderFieldM.x + 80 , phoneNumberField2.y+phoneNumberField2.height + d , native.systemFont, 25 )
- genderMText:setFillColor( rgb.color( "black" ) )
- sceneGroup:insert(genderFieldM)
- sceneGroup:insert(genderMText)
- 
- 
- for i=sceneGroup.numChildren,1, -1 do -- Resize components size by screen scale
-         
-     print("Largura :"..sceneGroup[i].width)
-     print("Altura :"..sceneGroup[i].height)
-     --print(sceneGroup[i])
- 
-     sceneGroup[i].width = sceneGroup[i].width*scaleX
-     sceneGroup[i].height = sceneGroup[i].height*scaleY
- 
-     end
- 
- 
-      --[[
-      completeNameField
-      cpfField
-      emailPaypalField
-      phoneNumberField
-      phoneNumberField2 -- optional
-      cepField --optional
-      adressField
-      numberField
-      complementField
-      stateField
-      cityField
-     -- Code here runs when the scene is first created but has not yet appeared on screen
-     --]]
  end
  
  
