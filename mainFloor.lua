@@ -17,6 +17,8 @@ scaleY = 2
  local rgb = require "_rgb"
  local globalData = require("globalData")
  local widget = require("widget")
+ local reqs = require "requisitionTest"
+ 
  --local embeddableScrollview = require "plugin.embeddablescrollview"
  --local nanosvg = require( "plugin.nanosvg" )
 
@@ -368,7 +370,7 @@ function scene:create( event )
         onEvent = listenerMenuButton
     }
     menuBt.x = 50 
-    menuBt.y = _H/10
+    menuBt.y = _H/9
 
     addProdBt = widget.newButton {
         width = 70,
@@ -403,6 +405,8 @@ function scene:create( event )
     bkg:addEventListener( "touch" , touchListener )
     hideMenu:addEventListener( "touch" , touchListener )-----
 
+    reqs.makeReq()
+
 end
 
     
@@ -411,13 +415,15 @@ end
 function scene:show( event )
 
     local sceneGroup = self.view
-    local phase = event.phase
+    local phase = event.phase  
 
     if ( phase == "will" ) then
+
         -- Code here runs when the scene is still off screen (but is about to come on screen)
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
+        
 
     end
 end

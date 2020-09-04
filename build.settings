@@ -15,7 +15,15 @@ settings =
 		-- portrait, portraitUpsideDown, landscapeLeft, landscapeRight
 		default = "portrait",
 		supported = { "portrait", },
-	},
+	}, 
+
+    android =
+   {
+      usesPermissions =
+      {
+         "android.permission.INTERNET",
+      },
+   },
 
 	iphone =
 	{

@@ -219,7 +219,6 @@ for i=sceneGroup.numChildren,1, -1 do -- Resize components size by screen scale
 
     end
 
-
      --[[
      completeNameField
      cpfField

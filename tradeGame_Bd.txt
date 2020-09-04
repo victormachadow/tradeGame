@@ -52,11 +52,11 @@ client requisitions
  cpf
  paypal
  phone
+ plays - fk
+ phone2
  country
  state
  city
- hash
- hash_outra
  subscribe - fk
  products - fk
  evaluation -
@@ -75,10 +75,13 @@ client requisitions
  describ
  photoLib - fk
  photoLibBlob - fk
+ viewed
+ savednumber
  value
  amount
  player_id - fk
  winner_id - fk
+ date
 
  
  -----------
@@ -88,7 +91,7 @@ client requisitions
   icon - 
   path
   title
-  
+
 
 -----------
  photoBlob
