@@ -103,6 +103,16 @@ scaleY = 2
 
 -- Listeners --
 
+local function gotoScene( id )
+      
+        if( id == "top" or  id == "toptext") then
+            display.remove(sceneGroup)
+            composer.removeScene("mainFloor")
+            composer.gotoScene("topProducts", options )
+        end     
+end
+
+
 local function touchListener( event )
  
     print( "Unique touch ID: " .. tostring(event.id) )
@@ -139,6 +149,7 @@ local function touchListener( event )
         if( event.target.id == "top" or  event.target.id == "toptext") then
             topProductsText.alpha = 0.5
             topQuad.alpha = 1
+            gotoScene(event.target.id)
         end
         if( event.target.id == "about" or  event.target.id == "aboutext") then
             aboutText.alpha = 0.5
@@ -358,7 +369,7 @@ function scene:create( event )
     menuContainer:insert( topProductsText , false ) 
     menuContainer:insert( aboutText , false )
     menuContainer:insert( paymentMarketText , false )
-    
+    sceneGroup:insert(menuContainer)
 
     ---------x---------
     
