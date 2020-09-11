@@ -8,6 +8,7 @@ local rgb = require "_rgb"
 local globalData = require("globalData")
 local widget = require("widget")
 local composer = require( "composer" )
+local json = require "json"
 
 -- vars --
 local scene = composer.newScene()
@@ -16,6 +17,10 @@ local bkg
 local quad
 local scrollProds
 local cards = {}
+
+ --- cards texts --
+local titleCard
+local amountCard
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -38,29 +43,9 @@ local function iconListener( event )
     return true
 end
 
+ function showScrollView()
 
--- -----------------------------------------------------------------------------------
--- Scene event functions
--- -----------------------------------------------------------------------------------
-
--- create()
-function scene:create( event )
-
-    local sceneGroup = self.view
-    -- Code here runs when the scene is first created but has not yet appeared on screen
-    bkg = display.newImage( "pngs/green.jpg" )
-    --bkg:setReferencePoint( display.CenterReferencePoint )
-    bkg.x = display.contentCenterX
-    bkg.y = display.contentCenterY
-    sceneGroup:insert( bkg )
-
-    quad = display.newRect( centerX , centerY , _W/2*1.7  , _H )
-    quad:setFillColor( rgb.color( "white" ) )
-    quad.alpha = 0.5
-    sceneGroup:insert(quad) 
-
-    
-           scrollProds = widget.newScrollView
+    scrollProds = widget.newScrollView
            {
                hideBackground = true,
                width = _W,
@@ -90,6 +75,64 @@ function scene:create( event )
                		   
         end
            sceneGroup:insert( scrollProds )
+
+
+ end
+
+local function genericNetworkListener( event )
+    
+    local response = event.response --this is the json file returned from the echo php call
+    print("downloadListener(event) has bee executed")
+    print("event.response == ", response)
+    local decodedStats = json.decode(response)
+    if
+        ((response == "Connection failure" and type(decodedStats) ~= "table") or response == "Connection failure" or
+            response == "Timed out" or
+            event.isError or
+            type(decodedStats) ~= "table")
+    then
+    end
+
+       if type(decodedStats) == "table" then -- after page downloaded
+          --print("decoded response: "..decodedStats )
+          
+        
+         --After got data go download show scroll view iterating prodListData and downloading images
+       
+       end
+       local i = 1
+       for i,v in ipairs(decodedStats) do
+         --print("Nome card"..v[i][1])
+         --print("Nome card"..v[i][2])
+         print(decodedStats[i][1])
+         --print(v[i][1])
+       end
+             
+end
+
+
+-- -----------------------------------------------------------------------------------
+-- Scene event functions
+-- -----------------------------------------------------------------------------------
+
+-- create()
+function scene:create( event )
+
+    local sceneGroup = self.view
+    -- Code here runs when the scene is first created but has not yet appeared on screen
+    bkg = display.newImage( "pngs/green.jpg" )
+    --bkg:setReferencePoint( display.CenterReferencePoint )
+    bkg.x = display.contentCenterX
+    bkg.y = display.contentCenterY
+    sceneGroup:insert( bkg )
+
+    quad = display.newRect( centerX , centerY , _W/2*1.7  , _H )
+    quad:setFillColor( rgb.color( "white" ) )
+    quad.alpha = 0.5
+    sceneGroup:insert(quad) 
+
+network.request("http://127.0.0.1:8080/tradeGame_api/tests/getListTest.php", "GET",  genericNetworkListener )
+    
 
 end
 

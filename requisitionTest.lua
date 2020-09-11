@@ -4,7 +4,8 @@ local json = require "json"
 local headers = {}
 headers["Content-Type"] = "application/x-www-form-urlencoded"
 headers["Accept-Language"] = "en-US"
-local params = {} 
+local params = {}
+local prodData ={} 
 
 local function genericNetworkListener( event )
     
@@ -23,13 +24,19 @@ local function genericNetworkListener( event )
     end
 
        if type(decodedStats) == "table" then
-        DownloadedString = decodedStats.String
-         if( decodedStats.id=="1")then
-        print("Dado baixado da api testeCon.php = ", DownloadedString)
-         end
-         if( decodedStats.id=="2")then
-            print("Dado baixado da api testeCon2.php = ", DownloadedString)
-        end
+        
+        title = decodedStats.title
+        amount = decodedStats.amount
+        prodData = decodedStats
+        -- if( decodedStats.id=="1")then
+        print("Total data api getJsons.php = ", decodedStats)
+        print("Titulo api getJsons.php = ", title)
+        print("Montante api getJsons.php = ", amount)
+         --end
+         --if( decodedStats.id=="2")then
+            --print("Dado baixado da api testeCon2.php = ", DownloadedString)
+        --end
+         
         
        end
 end
