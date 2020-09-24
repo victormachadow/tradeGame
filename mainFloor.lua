@@ -235,13 +235,18 @@ local function listenerAddProd( event )
     if ( "began" == event.phase ) then
      --code
      event.target.alpha = 0.5
+     display.remove(sceneGroup)
+     composer.removeScene("mainFloor")
+     composer.gotoScene("addProd", options )
     
     end
- 
+
+     --[[
      if ( "ended" == event.phase ) then
          --code
      event.target.alpha = 1.0
      end
+     --]]
  
  end
 
@@ -251,13 +256,18 @@ local function listenerAddProd( event )
     if ( "began" == event.phase ) then
      --code
      event.target.alpha = 0.5
+     display.remove(sceneGroup)
+     composer.removeScene("mainFloor")
+     composer.gotoScene("topProducts", options )
     
     end
  
+     --[[
      if ( "ended" == event.phase ) then
          --code
      event.target.alpha = 1.0
      end
+     --]]
  
  end
 

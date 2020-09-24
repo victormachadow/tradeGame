@@ -79,9 +79,10 @@ client requisitions
  savednumber
  value
  amount
- player_id - fk
- winner_id - fk
- date
+ playerid - fk
+ winnerid - fk
+ dateinit
+ datend
 
  
  -----------
@@ -106,7 +107,26 @@ client requisitions
  iduser - fk
  type
  date
- 
+
+ -------------
+
+ plays -- user plays
+
+ id
+ iduser
+ idproduct
+ date
+ timeplay
+ points
+ maxpoint
+ price
+
+  -------------
+
+ savedProducts
+
+  id - fk ( productsid )
+  ownerid
 
  
 

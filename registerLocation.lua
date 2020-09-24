@@ -93,6 +93,21 @@ end
      end
  end
 
+ local function listenerConfirm( event )
+  
+    if ( "ended" == event.phase ) then
+        if(slideActive)then
+            display.remove(stateField)
+            stateField = nil
+            display.remove(confirmButton)
+            confirmButton = nil
+            slideActive = false
+            stateButton:setLabel( "Estado" )
+            end   
+    end
+end
+
+
  local function slideListener(event) --Generic multilistener function for object list
     
     if ( event.phase == "began" ) then
@@ -180,13 +195,13 @@ end
         confirmButton = widget.newButton(   -- customized settings 
      {
          label = "Confirma",
-         --onEvent =  listenerNext, -- listenerSkip
+         onEvent =  listenerConfirm, -- listenerSkip
          emboss = false,
          font = native.systemFontBold ,
          fontSize = 25 ,
          -- Properties for a rounded rectangle button
          shape = "rect",
-         width = stateButton.width*0.8,
+         width = stateButton.width,
          height = _H/18,
          fillColor = { default= { rgb.color( "black" ) } , over = { rgb.color( "gray" ) } },
          labelColor = { default= { rgb.color( "white" ) } , over = { rgb.color( "white" ) } }
@@ -194,7 +209,7 @@ end
      }
  )
         confirmButton.x = centerX
-        confirmButton.y = stateField.y + stateField.height/2 + confirmButton.height/2
+        confirmButton.y = stateButton.y 
         sceneGroup:insert( confirmButton )
     end --slideActive end if
         

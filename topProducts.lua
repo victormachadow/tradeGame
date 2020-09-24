@@ -17,10 +17,14 @@ local bkg
 local quad
 local scrollProds
 local cards = {}
+-- Comes a 2d array card like [["id","title","amount","city","state"] [..]]
 
  --- cards texts --
-local titleCard
-local amountCard
+local titleCardtext
+local amountCardtext
+local cityCardtext
+local stateCardtext
+
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -100,13 +104,20 @@ local function genericNetworkListener( event )
          --After got data go download show scroll view iterating prodListData and downloading images
        
        end
+       --[[
+       --for mysql_num 
        local i = 1
+       local j = 1
        for i,v in ipairs(decodedStats) do
          --print("Nome card"..v[i][1])
          --print("Nome card"..v[i][2])
-         print(decodedStats[i][1])
-         --print(v[i][1])
+         --print(decodedStats[i][1])
+         for j,v in ipairs(decodedStats[i]) do
+            print("Array :"..i..decodedStats[i][j])
+         end
        end
+          --]]
+       --for mysql_assoc
              
 end
 
