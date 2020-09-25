@@ -14,14 +14,33 @@ local scene = composer.newScene()
 local sceneGroup = display.newGroup()
 local bkg
 local typeButton
+local titleBox
+local describBox
 local slideActive = false
 local icons = {}
 local labels = {}
+local options = {   -- Effects when scene changes
+effect = "slideLeft",
+time = 500
+}
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
+
+local function listenerNext( event )
+  
+    if ( "ended" == event.phase ) then
+        --code
+        if(globalData.devUi)then
+            display.remove(sceneGroup)
+            composer.removeScene("addProd")
+            composer.gotoScene("addProd2", options )
+
+        end
+    end
+end
 
 local function touchListener( event ) -- Generic multilistener function
  
@@ -40,6 +59,8 @@ local function touchListener( event ) -- Generic multilistener function
          display.remove(confirmButton)
          confirmButton = nil
          slideActive = false
+         titleBox.isVisible = true
+         describBox.isVisible = true
          end
         end
     if ( event.target.id == "c")then
@@ -50,6 +71,8 @@ local function touchListener( event ) -- Generic multilistener function
             confirmButton = nil
             slideActive = false
             typeButton:setLabel("Tipo")
+            titleBox.isVisible = true
+            describBox.isVisible = true
         end
     end
  
@@ -114,13 +137,15 @@ local function showSlide( event )
      if(slideActive == false)then
         --code
         slideActive = true
+        titleBox.isVisible = false
+        describBox.isVisible = false
         typeField = widget.newScrollView
         {
             hideBackground = true,
             width = typeButton.width,
             height = _H/2.4,
             scrollWidth = typeButton.width,
-            scrollHeight = _H/2.4,
+            scrollHeight = _H,
 			horizontalScrollDisabled = true,
             --verticalScrollDisabled = true
             --listener = iconListener
@@ -205,6 +230,7 @@ function scene:create( event )
     headerTagText:setFillColor( rgb.color( "white" ) )
     sceneGroup:insert(headerTagText)
 
+ 
     typeButton = widget.newButton(   -- customized settings 
     {
         label = "Selecione o tipo",
@@ -222,23 +248,48 @@ function scene:create( event )
     }
 )
 typeButton.x = centerX
-typeButton.y =  headerui.y + _H/4,8
+typeButton.y =   headerui.y + _H/4.8
 sceneGroup:insert(typeButton)
 
-titleBox = native.newTextBox( centerX, typeButton.y + _H/6.6 , quad.width*0.7, _H/9.6 )
+
+titleBox = native.newTextBox( centerX , typeButton.y + _H/6.6 , quad.width*0.7, _H/9.6 )
 titleBox.text = "Digite o titulo do produto , no maximo 20 caracteres"
 titleBox.isEditable = true
 titleBox.size = 28
+--titleBox.isVisible = false
 sceneGroup:insert(titleBox)
 
 describBox = native.newTextBox( centerX, titleBox.y + _H/4.8 , quad.width*0.7, _H/4.8 )
 describBox.text = "Decreva seu produto , no maximo 100 caracteres"
 describBox.isEditable = true
 describBox.size = 28
+--describBox.isVisible = false
 sceneGroup:insert(describBox)
 
-
 --titleBox:addEventListener( "userInput", textListener )
+
+
+nextButton = widget.newButton(   -- customized settings 
+     {
+         label = "Avançar",
+         onEvent = listenerNext,
+         emboss = false,
+         font = native.systemFontBold ,
+         fontSize = 25 ,
+         -- Properties for a rounded rectangle button
+         shape = "rect",
+         width = 150,
+         height = 80,
+         fillColor = { default= { rgb.color( "black" ) } , over = { rgb.color( "gray" ) } },
+         labelColor = { default= { rgb.color( "white" ) } , over = { rgb.color( "white" ) } }
+         
+     }
+ )
+
+ 
+ nextButton.x = centerX + (quad.width/2 - 80)
+ nextButton.y = centerY + (quad.height/2 - 55)
+ sceneGroup:insert(nextButton)
    
 
 

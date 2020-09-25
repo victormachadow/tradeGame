@@ -135,7 +135,7 @@ end
         --if(event.target.id=="sv")then
          print("scroll moved")
           local dx = math.abs( event.y - event.yStart ) 
-          if ( dx > 10 ) then
+          if ( dx > 5 ) then
           display.getCurrentStage():setFocus( event.target, event.id )
           stateField:takeFocus( event ) 
           end
@@ -163,14 +163,14 @@ end
             width = stateButton.width,
             height = 400,
             scrollWidth = stateButton.width,
-            scrollHeight = 400,
+            scrollHeight = 2000,
 			horizontalScrollDisabled = true,
             --verticalScrollDisabled = true
             --listener = iconListener
         }
         stateField.id ="sv"
         stateField.x = centerX
-        stateField.y = stateButton.y + stateField.height/2 + stateButton.height/2
+        stateField.y = stateButton.y + stateField.height/2 + stateButton.height/2 
         --sceneGroup:insert( stateField ) 
         
         aux = _H/32 --30
@@ -276,11 +276,11 @@ end
      bkg:addEventListener( "touch", touchListener )
      sceneGroup:insert( bkg )
  
-     quad = display.newRect( centerX , centerY , 450  , _H-100 -_H/10 )
+     quad = display.newRect( centerX , centerY , _W/1.4  , _H-100 -_H/10 )
      quad:setFillColor( rgb.color( "white" ) )
      quad.alpha = 0.5
      sceneGroup:insert(quad)
-     header = display.newRect( quad.x , centerY-quad.height/2*scaleY  , quad.width , 60*scaleY )
+     header = display.newRect( quad.x , centerY-quad.height/2 , quad.width , 60*scaleY )
      header:setFillColor( rgb.color( "black" ) )
      sceneGroup:insert(header)
      accIcon = display.newImage( "pngs/sharp_account_circle_black_48dp_96.png" )
