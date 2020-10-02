@@ -19,15 +19,19 @@ local describBox
 local slideActive = false
 local icons = {}
 local labels = {}
-local options = {   -- Effects when scene changes
-effect = "slideLeft",
-time = 500
-}
-local customParams = {
+numPlays = 0
+
+local customParams2 = {
     type = "" ,
     title ="" ,
-    describ = ""  
+    describ = "",
+    state = "",
+    city  = "" ,
+    value = "" ,
+    price = "" ,
+    time  = ""
 }
+
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -46,11 +50,51 @@ local function listenerNext( event )
     end
 end
 
+local function genericNetworkListener( event )
+    
+    local response = event.response --this is the json file returned from the echo php call
+    print("downloadListener(event) has bee executed")
+    print("event.response == ", response)
+    local decodedStats = json.decode(response)
+    if
+        ((response == "Connection failure" and type(decodedStats) ~= "table") or response == "Connection failure" or
+            response == "Timed out" or
+            event.isError or
+            type(decodedStats) ~= "table")
+    then
+    end
+
+       if type(decodedStats) == "table" then -- after page downloaded
+          --print("decoded response: "..decodedStats )
+          -- after register sucesfull response then goes to photos scene
+            --display.remove(sceneGroup)
+            --composer.removeScene("addProd2")
+            --composer.gotoScene("addPhoto", options )
+       
+       end
+  
+             
+end
+
+local function listenerConfirm( event )
+  
+    if ( "ended" == event.phase ) then
+        if(slideActive)then
+            display.remove(stateField)
+            stateField = nil
+            display.remove(confirmButton)
+            confirmButton = nil
+            slideActive = false
+            stateButton:setLabel( "Estado" )
+            end   
+    end
+end
+
 local function touchListener( event ) -- Generic multilistener function
  
     --print( "Unique touch ID: " .. tostring(event.id) )
  
- if ( event.phase == "began" ) then
+    if ( event.phase == "began" ) then
         
         --event.target.alpha = 0.5
         -- Set focus on object using unique touch ID
@@ -58,28 +102,13 @@ local function touchListener( event ) -- Generic multilistener function
  
         if( event.target.id == "bkg" )then
          if(slideActive)then
-         display.remove(typeField)
-         typeField = nil
+         display.remove(stateField)
+         stateField = nil
          display.remove(confirmButton)
          confirmButton = nil
          slideActive = false
-         titleBox.isVisible = true
-         describBox.isVisible = true
          end
         end
-    if ( event.target.id == "c")then
-        if(slideActive)then
-            display.remove(typeField)
-            typeField = nil
-            display.remove(confirmButton)
-            confirmButton = nil
-            slideActive = false
-            typeButton:setLabel("Tipo")
-            titleBox.isVisible = true
-            describBox.isVisible = true
-        end
-    end
- 
     elseif ( event.phase == "ended" or event.phase == "cancelled" ) then
         
         
@@ -120,7 +149,7 @@ local function slideListener(event) --Generic multilistener function for object 
           local dx = math.abs( event.y - event.yStart ) 
           if ( dx > 10 ) then
           display.getCurrentStage():setFocus( event.target, event.id )
-          typeField:takeFocus( event ) 
+          stateField:takeFocus( event ) 
           end
        -- end
        
@@ -141,34 +170,32 @@ local function showSlide( event )
      if(slideActive == false)then
         --code
         slideActive = true
-        titleBox.isVisible = false
-        describBox.isVisible = false
-        typeField = widget.newScrollView
+        stateField = widget.newScrollView
         {
             hideBackground = true,
-            width = typeButton.width,
+            width = stateButton.width,
             height = _H/2.4,
-            scrollWidth = typeButton.width,
-            scrollHeight = _H,
+            scrollWidth = stateButton.width,
+            scrollHeight =  _H,
 			horizontalScrollDisabled = true,
             --verticalScrollDisabled = true
             --listener = iconListener
         }
-        typeField.id ="sv"
-        typeField.x = centerX
-        typeField.y = typeButton.y + typeField.height/2 + typeButton.height/2
-        --sceneGroup:insert( typeField ) 
+        stateField.id ="sv"
+        stateField.x = centerX
+        stateField.y = stateButton.y + stateField.height/2 + stateButton.height/2 
+        --sceneGroup:insert( stateField ) 
         
         aux = _H/32 --30
         aux2 = 0
         for i = 1, 27 do
-               icons[i] = display.newRect( centerX-125  , aux+aux2  , typeButton.width , _H/19.2 )
+               icons[i] = display.newRect( centerX-125  , aux+aux2  , stateButton.width , _H/19.2 )
                --icons[i]:setFillColor( math.random(), math.random(), math.random() )
                icons[i]:setFillColor( rgb.color( "white" ) )
                labels[i]=display.newText( i , icons[i].x , icons[i].y , native.systemFon, 20 )
                labels[i]:setFillColor( rgb.color( "black" ) )
-               typeField:insert( icons[i] ) 
-               typeField:insert(labels[i])
+               stateField:insert( icons[i] ) 
+               stateField:insert(labels[i])
                icons[i].alpha = 1.0
                icons[i].id = i
                aux2 = _H/17.4 --60
@@ -177,18 +204,18 @@ local function showSlide( event )
                 
                		   
         end
-        sceneGroup:insert( typeField )
+        sceneGroup:insert( stateField )
         confirmButton = widget.newButton(   -- customized settings 
      {
          label = "Confirma",
-         onEvent = touchListener , -- listenerSkip
-         id = "c",
+         onEvent =  listenerConfirm, -- listenerSkip
          emboss = false,
+         id = "c",
          font = native.systemFontBold ,
          fontSize = 25 ,
          -- Properties for a rounded rectangle button
          shape = "rect",
-         width = typeButton.width*0.8,
+         width = stateButton.width,
          height = _H/18,
          fillColor = { default= { rgb.color( "black" ) } , over = { rgb.color( "gray" ) } },
          labelColor = { default= { rgb.color( "white" ) } , over = { rgb.color( "white" ) } }
@@ -196,7 +223,7 @@ local function showSlide( event )
      }
  )
         confirmButton.x = centerX
-        confirmButton.y = typeField.y + typeField.height/2 + confirmButton.height/2
+        confirmButton.y = stateButton.y 
         sceneGroup:insert( confirmButton )
     end --slideActive end if
         
@@ -204,7 +231,6 @@ local function showSlide( event )
         end
     
     end
-
 
 
 -- -----------------------------------------------------------------------------------
@@ -230,53 +256,16 @@ function scene:create( event )
     headerui = display.newRect( centerX , 0  , _W , _H/3.2 )
     headerui:setFillColor( rgb.color( "black" ) )
     sceneGroup:insert( headerui )
-    headerTagText = display.newText( "Registrar um produto", centerX , headerui.height/3 , native.systemFontBold, 25 )
+    headerTagText = display.newText( "Adicionar foto", centerX , headerui.height/3 , native.systemFontBold, 25 )
     headerTagText:setFillColor( rgb.color( "white" ) )
     sceneGroup:insert(headerTagText)
 
- 
-    typeButton = widget.newButton(   -- customized settings 
-    {
-        label = "Selecione o tipo",
-        onEvent = showSlide,
-        emboss = false,
-        font = native.systemFont ,
-        fontSize = 20 ,
-        -- Properties for a rounded rectangle button
-        shape = "rect",
-        width = quad.width*0.7,
-        height = _H/16,
-        fillColor = { default= { rgb.color( "white" ) } , over = { rgb.color( "gray" ) } },
-        labelColor = { default= { rgb.color( "black" ) } , over = { rgb.color( "gray" ) } }
-        
-    }
-)
-typeButton.x = centerX
-typeButton.y =   headerui.y + _H/4.8
-sceneGroup:insert(typeButton)
+   
 
-
-titleBox = native.newTextBox( centerX , typeButton.y + _H/6.6 , quad.width*0.7, _H/9.6 )
-titleBox.text = "Digite o titulo do produto , no maximo 20 caracteres"
-titleBox.isEditable = true
-titleBox.size = 28
---titleBox.isVisible = false
-sceneGroup:insert(titleBox)
-
-describBox = native.newTextBox( centerX, titleBox.y + _H/4.8 , quad.width*0.7, _H/4.8 )
-describBox.text = "Decreva seu produto , no maximo 100 caracteres"
-describBox.isEditable = true
-describBox.size = 28
---describBox.isVisible = false
-sceneGroup:insert(describBox)
-
---titleBox:addEventListener( "userInput", textListener )
-
-
-nextButton = widget.newButton(   -- customized settings 
+nextButton = widget.newButton(  -- customized settings 
      {
          label = "Avançar",
-         onEvent = listenerNext,
+         --onEvent = listenerNext,
          emboss = false,
          font = native.systemFontBold ,
          fontSize = 25 ,
@@ -295,7 +284,6 @@ nextButton = widget.newButton(   -- customized settings
  nextButton.y = centerY + (quad.height/2 - 55)
  sceneGroup:insert(nextButton)
    
-
 
 end
 
