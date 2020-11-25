@@ -32,7 +32,7 @@ local quad
 
 local params = {}
 local dataSend = { ["email"] ="" , ["pass"] ="" }
-headers["X-API-Key"] = "13b6ac91a2" -- token , depois muda isso..
+local headers = { ["X-API-Key"] = "13b6ac91a2" }  -- token , depois muda isso..
  
 local options = {   -- Effects when scene changes
 effect = "slideRight",
@@ -44,6 +44,29 @@ time = 500
 -- -----------------------------------------------------------------------------------
 
 -- Listeners --
+
+local function genericNetworkListenerID( event )
+    
+    local response = event.response --this is the json file returned from the echo php call
+    print("downloadListener(event) has bee executed")
+    print("event.response == ", response)
+    local decodedStats = json.decode(response)
+    if
+        ((response == "Connection failure" and type(decodedStats) ~= "table") or response == "Connection failure" or
+            response == "Timed out" or
+            event.isError or
+            type(decodedStats) ~= "table")
+    then
+    end
+
+       if type(decodedStats) == "table" then 
+          
+        -- salva o id em cache
+       
+       end
+  
+             
+end
 
 local function genericNetworkListener( event )
     
@@ -61,11 +84,18 @@ local function genericNetworkListener( event )
 
        if type(decodedStats) == "table" then 
           
+        -- Se cadastro com sucesso , pegar o id para salvar em cache
        
        end
   
              
 end
+
+local function register()
+
+
+
+end   
 
 
 local function emailListener( event )
