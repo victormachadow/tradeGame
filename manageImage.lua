@@ -19,6 +19,7 @@ local describBox
 local slideActive = false
 local icons = {}
 local labels = {}
+local savePhotoBt
 numPlays = 0
 
 local customParams2 = {
@@ -32,10 +33,196 @@ local customParams2 = {
     time  = ""
 }
 
+local photoFiles = {
+	"photos/Arch01.jpg",
+	"photos/Biloxi05.jpg",
+	"photos/Butterfly01.jpg",
+	"photos/DSC6722.jpg",
+	"photos/DSC_7743.jpg",
+	"photos/ElCap.jpg",
+	"photos/FlaKeysSunset.jpg",
+	"photos/MaimiSkyline.jpg",
+	"photos/MtRanier8x10.jpg",
+	"photos/Tulip.jpg",
+	"photos/WhiteTiger.jpg",
+	"photos/Yosemite Valley.jpg"
+}
+
+ ------ Send photo module -------
+local url = "http://10.0.3.248:8080/tradeGame_api/upload.php"
+local method = "PUT"
+local params = {
+   timeout = 60,
+   progress = true,
+   bodyType = "binary"
+}
+
+ -- will generate a random name to each photo
+local id = 1
+local actualN = 1
+local filename = tostring(id).."_"..tostring(actualN)..".jpg"
+local baseDir = system.TemporaryDirectory
+local contentType = "image/jpg"  --another option is "text/plain"
+local headers = {}
+headers.filename = filename
+params.headers = headers
+local img
+
+
+local photo		-- holds the photo object
+local PHOTO_FUNCTION = media.PhotoLibrary 		-- or media.SavedPhotosAlbum
+
+----------x---------
+
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
+
+function getfilename()
+
+    name =tostring(id).."_"..tostring(actualN)..".jpg" 
+    --name =tostring(1).."_"..tostring(1)..".jpg"
+    print(name)
+   filename = name
+    end
+
+
+local function fitImage( displayObject, fitWidth, fitHeight, enlarge )
+	--
+	-- first determine which edge is out of bounds
+    --
+  if (  displayObject ~= nil  )then
+
+	local scaleFactor = fitHeight / displayObject.height 
+	local newWidth = displayObject.width * scaleFactor
+	if newWidth > fitWidth then
+		scaleFactor = fitWidth / displayObject.width 
+	end
+	if not enlarge and scaleFactor > 1 then
+		return
+	end
+    displayObject:scale( scaleFactor, scaleFactor )
+  end
+end
+
+------- Send photo listeners --------
+
+local function uploadListener( event )
+    if ( event.isError ) then
+       print( "Network Error." )
+ 
+ 
+    else
+       if ( event.phase == "began" ) then
+          print( "Upload started" )
+       elseif ( event.phase == "progress" ) then
+          print( "Uploading... bytes transferred ", event.bytesTransferred )
+       elseif ( event.phase == "ended" ) then
+          print( "Upload ended..." )
+          print( "Status:", event.status )
+          print( "Response:", event.response )
+          --show recently photo uploaded
+           if( img ~=nil )then
+           display.remove(img)
+           img = nil 
+           end
+           --[[
+          timer.performWithDelay( 2000 , function()
+          
+           img = display.newImage( filename , system.TemporaryDirectory ,  centerX , centerY )
+           --display.save( img, filename [, baseDir] )
+           --display.save( img , { filename=filename, baseDir=system.TemporaryDirectory } )
+           media.save( img , system.TemporaryDirectory )
+ 
+           fitImage( img , _H/3.2 , _H/4.8 , false )
+           
+           actualN = actualN + 1
+           
+           getfilename()
+           
+           print("filename now is:"..filename)
+           
+           
+          end , 1 )
+          --]]
+       end
+    end
+ end
+ 
+ 
+ local sessionComplete = function(event)
+     photo = event.target
+     
+     --network.upload( url , method, uploadListener, params, filename, baseDir , contentType )
+     
+     if photo then
+ 
+         if photo.width > photo.height then
+             photo:rotate( -90 )			-- rotate for landscape
+             print( "Rotated" )
+         end
+         
+         -- Scale image to fit content scaled screen
+         local xScale = _W / photo.contentWidth
+         local yScale = _H / photo.contentHeight
+         local scale = math.max( xScale, yScale ) * .75
+         photo:scale( scale, scale )
+         photo.x = centerX
+         photo.y = centerY
+         print( "photo w,h = " .. photo.width .. "," .. photo.height, xScale, yScale, scale )
+         --print(photo.baseDir)
+         --network.upload( url , method, uploadListener, params, filename, baseDir , contentType )
+ 
+     else
+         print("No Image Selected")
+         if( img ~=nil )then
+            display.remove(img)
+            img = nil 
+         end
+
+           timer.performWithDelay( 2000 , function()
+          
+           img = display.newImage( filename , system.TemporaryDirectory ,  centerX , centerY )
+            --display.save( img, filename [, baseDir] )
+            --display.save( img , { filename=filename, baseDir=system.TemporaryDirectory } )
+            media.save( img , system.TemporaryDirectory )
+  
+            fitImage( img , _H/3.2 , _H/4.8 , false )
+            
+            actualN = actualN + 1
+            
+            getfilename()
+            
+            print("filename now is:"..filename)
+
+            savePhotoBt = widget.newButton(  -- customized settings 
+            {
+                label = "Salvar foto",
+                --onEvent = savePhoto,
+                emboss = false,
+                font = native.systemFontBold ,
+                fontSize = 20 ,
+                -- Properties for a rounded rectangle button
+                shape = "rect",
+                width = _W/4.2,
+                height = _H/12,
+                fillColor = { default= { rgb.color( "black" ) } , over = { rgb.color( "gray" ) } },
+                labelColor = { default= { rgb.color( "white" ) } , over = { rgb.color( "white" ) } }
+                
+            }
+        )
+           savePhotoBt.x = centerX
+           savePhotoBt.y = centerY + _H/4.8 + _H/10
+           
+            
+           end , 1 )
+ 
+     end
+ end
+
+ ----------------x---------------
+
 
 local function listenerNext( event )
   
@@ -232,6 +419,25 @@ local function showSlide( event )
     
     end
 
+    local function listenerMenuButton( event )
+        print("clicked")
+     
+        if ( "began" == event.phase ) then
+         
+         event.target.alpha = 0.5
+       
+     end
+     
+         if ( "ended" == event.phase ) then
+             --code
+         event.target.alpha = 1.0
+         -- Delay some to allow the display to refresh before calling the Photo Picker
+	     timer.performWithDelay( 100, function() media.selectPhoto( { listener = sessionComplete, mediaSource = PHOTO_FUNCTION , destination = { baseDir = baseDir, filename = filename } } ) 
+	        end )
+         end
+     
+     end
+
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -249,7 +455,7 @@ function scene:create( event )
     bkg.id = "bkg"
     bkg:addEventListener( "touch", touchListener )
     sceneGroup:insert( bkg )
-    quad = display.newRect( centerX , centerY , _W/1.2  , _H*0.9 )
+    quad = display.newRect( centerX , centerY , _W  , _H*0.9 )
     quad:setFillColor( rgb.color( "white" ) )
     quad.alpha = 0.5
     sceneGroup:insert(quad)
@@ -260,7 +466,87 @@ function scene:create( event )
     headerTagText:setFillColor( rgb.color( "white" ) )
     sceneGroup:insert(headerTagText)
 
-   
+     camBt = widget.newButton {
+        
+        defaultFile = "pngs/baseline_camera_alt_black_96dp.png",
+        id = "cam",
+        onEvent = listenerMenuButton
+    }
+    camBt.x = centerX
+    camBt.y = centerY
+    sceneGroup:insert(camBt)
+
+      -- Esquema em cascatinha --
+      --[[
+    quadPhoto1 = display.newRect( 0 , headerui.height/1.3 , _W/4 , _W/4 )
+    quadPhoto1.x = quadPhoto1.width/2
+    quadPhoto2 = display.newRect( quadPhoto1.x + quadPhoto1.width + 3 , headerui.height/1.3 , _W/4 , _W/4 )
+    quadPhoto3 = display.newRect( quadPhoto2.x + quadPhoto2.width + 3 , headerui.height/1.3 , _W/4 , _W/4 )
+    quadPhoto4 = display.newRect( quadPhoto3.x + quadPhoto3.width + 3 , headerui.height/1.3 , _W/4 , _W/4 )
+
+    quadPhoto5 = display.newRect( quadPhoto1.x , quadPhoto4.y+quadPhoto4.height+3 , _W/4 , _W/4 )
+    quadPhoto6 = display.newRect( quadPhoto5.x + quadPhoto5.width + 3 , quadPhoto5.y , _W/4 , _W/4 )
+    quadPhoto7 = display.newRect( quadPhoto6.x + quadPhoto6.width + 3 , quadPhoto5.y , _W/4 , _W/4 )
+    quadPhoto8 = display.newRect( quadPhoto7.x + quadPhoto7.width + 3 , quadPhoto5.y , _W/4 , _W/4 )
+
+    quadPhoto9  =  display.newRect( quadPhoto1.x , quadPhoto8.y+quadPhoto8.height+3 , _W/4 , _W/4 )
+    quadPhoto10 = display.newRect( quadPhoto9.x + quadPhoto9.width + 3 , quadPhoto9.y , _W/4 , _W/4 )
+    quadPhoto11 = display.newRect( quadPhoto10.x + quadPhoto10.width + 3 , quadPhoto9.y , _W/4 , _W/4 )
+    quadPhoto12 = display.newRect( quadPhoto11.x + quadPhoto11.width + 3 , quadPhoto9.y , _W/4 , _W/4 )
+
+    -- Thumbs --
+    --display.newImage( "image.jpg" , system.TemporaryDirectory ,  centerX , centerY )
+    --display.newImageRect("IMAGE.png", 20, 20 )
+    
+    quadPhotoThumb1 = display.newImageRect( photoFiles[1] , _W/4 , _W/4 )
+    quadPhotoThumb1.x = quadPhoto1.x
+    quadPhotoThumb1.y = quadPhoto1.y
+    
+    quadPhotoThumb2 = display.newImageRect( photoFiles[2] , _W/4 , _W/4 )
+    quadPhotoThumb2.x = quadPhoto2.x
+    quadPhotoThumb2.y = quadPhoto2.y
+
+    quadPhotoThumb3 = display.newImageRect( photoFiles[3],  _W/4 , _W/4 )
+    quadPhotoThumb3.x = quadPhoto3.x
+    quadPhotoThumb3.y = quadPhoto3.y 
+
+    quadPhotoThumb4 = display.newImageRect( photoFiles[4], _W/4 , _W/4  )
+    quadPhotoThumb4.x = quadPhoto4.x
+    quadPhotoThumb4.y = quadPhoto4.y
+
+    quadPhotoThumb5 = display.newImageRect( photoFiles[5] , _W/4 , _W/4  )
+    quadPhotoThumb5.x = quadPhoto5.x
+    quadPhotoThumb5.y = quadPhoto5.y
+
+    quadPhotoThumb6 = display.newImageRect( photoFiles[6] , _W/4 , _W/4 )
+    quadPhotoThumb6.x = quadPhoto6.x
+    quadPhotoThumb6.y = quadPhoto6.y
+
+    quadPhotoThumb7 = display.newImageRect( photoFiles[7] , _W/4 , _W/4  )
+    quadPhotoThumb7.x = quadPhoto7.x
+    quadPhotoThumb7.y = quadPhoto7.y
+
+    quadPhotoThumb8 = display.newImageRect( photoFiles[8] , _W/4 , _W/4 )
+    quadPhotoThumb8.x = quadPhoto8.x
+    quadPhotoThumb8.y = quadPhoto8.y
+
+    quadPhotoThumb9  = display.newImageRect( photoFiles[9] ,  _W/4 , _W/4 )
+    quadPhotoThumb9.x = quadPhoto9.x
+    quadPhotoThumb9.y = quadPhoto9.y
+    
+    quadPhotoThumb10 = display.newImageRect( photoFiles[10] , _W/4 , _W/4 )
+    quadPhotoThumb10.x = quadPhoto10.x
+    quadPhotoThumb10.y = quadPhoto10.y
+
+    
+    quadPhotoThumb11 = display.newImageRect( photoFiles[11] , _W/4 , _W/4 )
+    quadPhotoThumb11.x = quadPhoto11.x
+    quadPhotoThumb11.y = quadPhoto11.y
+    
+    quadPhotoThumb12 = display.newImageRect( photoFiles[12] , _W/4 , _W/4 )
+    quadPhotoThumb12.x = quadPhoto12.x
+    quadPhotoThumb12.y = quadPhoto12.y
+  --]]
 
 nextButton = widget.newButton(  -- customized settings 
      {
@@ -271,19 +557,17 @@ nextButton = widget.newButton(  -- customized settings
          fontSize = 25 ,
          -- Properties for a rounded rectangle button
          shape = "rect",
-         width = 150,
-         height = 80,
+         width = _W/4.2,
+         height = _H/12,
          fillColor = { default= { rgb.color( "black" ) } , over = { rgb.color( "gray" ) } },
          labelColor = { default= { rgb.color( "white" ) } , over = { rgb.color( "white" ) } }
          
      }
  )
-
  
  nextButton.x = centerX + (quad.width/2 - 80)
  nextButton.y = centerY + (quad.height/2 - 55)
  sceneGroup:insert(nextButton)
-   
 
 end
 
