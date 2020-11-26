@@ -8,9 +8,12 @@ local rgb = require "_rgb"
 local globalData = require("globalData")
 local widget = require("widget")
 local composer = require( "composer" )
+local loadsave = require("loadsave")
+--decoded = loadsave.loadTable("cache.json")
 
 -- vars --
 local scene = composer.newScene()
+dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = ""  }
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless

@@ -13,6 +13,8 @@ local composer = require( "composer" )
 local rgb = require "_rgb"
 local globalData = require("globalData")
 local widget = require("widget")
+local loadsave = require("loadsave")
+--decoded = loadsave.loadTable("cache.json")
 
  -- vars --
 
@@ -29,6 +31,7 @@ local registerBt
 local faceBookText
 local facebookButton
 local quad
+dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = ""  }
 
 local params = {}
 local dataSend = { ["email"] ="" , ["pass"] ="" }
@@ -44,6 +47,12 @@ time = 500
 -- -----------------------------------------------------------------------------------
 
 -- Listeners --
+
+local function geraCache() -- ESTA FUNCIONANDO
+
+    --loadsave.saveTable(dados, "cache.json")
+
+end
 
 local function genericNetworkListenerID( event )
     

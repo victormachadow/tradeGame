@@ -12,11 +12,12 @@ print(_H)
   local composer = require("composer")
   local loadsave = require("loadsave")
   local globalData = require("globalData")
+  dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = ""  }
   
   local decoded = loadsave.loadTable("cache.json")
   print(decoded)
   if(decoded == nil )then
-    loadsave.saveTable(dados, "cache.json")
+    loadsave.saveTable(dadosCache, "cache.json")
   end
  
   globalData.devUi = true
