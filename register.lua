@@ -169,7 +169,7 @@ end
 
 -- create()
 function scene:create( event )
-
+    print(globalData.token)
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
     --bkg = display.newRect( centerX , centerY , _W, _H )
