@@ -31,7 +31,7 @@ local registerBt
 local faceBookText
 local facebookButton
 local quad
-dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = ""  }
+dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = ""  }
 
 local params = {}
 local dataSend = { ["email"] ="" , ["pass"] ="" }

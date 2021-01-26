@@ -13,7 +13,7 @@ print(_H)
   local json = require "json"
   local loadsave = require("loadsave")
   local globalData = require("globalData")
-  dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = ""  }
+  dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = ""  }
   
   local decoded = loadsave.loadTable("cache.json")
   print(decoded)
@@ -44,9 +44,10 @@ print(_H)
         
        end
        globalData.token = response
+       --add token in cash
        composer.gotoScene("mainTransition")
 end
 
-network.request("http://localhost:8080/tradeGame_api/getToken.php", "GET",  genericNetworkListener )
+--network.request("http://localhost:8080/tradeGame_api/getToken.php", "GET",  genericNetworkListener )
 globalData.devUi = true
 --composer.gotoScene("mainTransition")

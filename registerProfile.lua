@@ -42,7 +42,7 @@ local nextButton
 local accIcon
 local headerTagText
 local header
-dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = ""  }
+dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = "" }
 
 local options = {   -- Effects when scene changes
 effect = "slideRight",

@@ -46,7 +46,7 @@ local arrowUp
 local arrowDown
 local previousClicked
 local atualClicked
-dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = ""  }
+dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "", ["token"] = ""  }
  
  local options = {   -- Effects when scene changes
  effect = "slideRight",

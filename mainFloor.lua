@@ -64,7 +64,7 @@ scaleY = 2
   local advSearchText
   local addProdText
 
-  dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = ""  }
+  dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = "" }
   
 
   --[[
