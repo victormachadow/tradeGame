@@ -13,14 +13,16 @@ print(_H)
   local json = require "json"
   local loadsave = require("loadsave")
   local globalData = require("globalData")
-  dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = ""  }
+  dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = "" , ["cached"] = 0 }
   
-  local decoded = loadsave.loadTable("cache.json")
-  print(decoded)
+  
+  local decoded = loadsave.loadTable("cache.json", system.ResourceDirectory )
+  print(decoded.cached)
   if(decoded == nil )then
     loadsave.saveTable(dadosCache, "cache.json")
   end
- 
+
+
   local function genericNetworkListener( event )
     
     local response = event.response --this is the json file returned from the echo php call
@@ -46,6 +48,19 @@ print(_H)
        globalData.token = response
        --add token in cash
        composer.gotoScene("mainTransition")
+end
+
+ 
+if (decoded.cached == 0 ) then -- Não foi cacheado vai para cadastro/login
+
+  composer.gotoScene("mainTransition")
+
+end
+
+if (decoded.cached == 1 ) then -- Cacheado vai para mainfloor
+
+  --composer.gotoScene("mainTransition")
+
 end
 
 --network.request("http://localhost:8080/tradeGame_api/getToken.php", "GET",  genericNetworkListener )

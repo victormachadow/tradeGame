@@ -119,6 +119,9 @@ local function emailListener( event )
     elseif ( event.phase == "ended" or event.phase == "submitted" ) then
         -- Output resulting text from "defaultField"
         print( event.target.text )
+        if( event.target.text =="" ) then
+            event.target.text = "Insira seu email"
+        end
  
     elseif ( event.phase == "editing" ) then
         print( event.newCharacters )
@@ -135,6 +138,7 @@ local function passListener( event )
     end
     if ( event.phase == "began" ) then
         -- User begins editing "defaultField"
+        event.target.text =""
  
     elseif ( event.phase == "ended" or event.phase == "submitted" ) then
         -- Output resulting text from "defaultField"
