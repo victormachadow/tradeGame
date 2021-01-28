@@ -64,5 +64,5 @@ if (decoded.cached == 1 ) then -- Cacheado vai para mainfloor
 end
 
 --network.request("http://localhost:8080/tradeGame_api/getToken.php", "GET",  genericNetworkListener )
-globalData.devUi = true
+globalData.devUi = false
 --composer.gotoScene("mainTransition")

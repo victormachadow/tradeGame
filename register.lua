@@ -11,6 +11,7 @@ scaleY = 2
 
 local composer = require( "composer" )
 local rgb = require "_rgb"
+local json = require "json"
 local globalData = require("globalData")
 local widget = require("widget")
 local loadsave = require("loadsave")
@@ -35,7 +36,8 @@ dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = ""
 
 local params = {}
 local dataSend = { ["email"] ="" , ["pass"] ="" }
-local headers = { ["X-API-Key"] = "13b6ac91a2" }  -- token , depois muda isso..
+local headers = {}
+  -- token , depois muda isso..
  
 local options = {   -- Effects when scene changes
 effect = "slideRight",
@@ -100,9 +102,25 @@ local function genericNetworkListener( event )
              
 end
 
-local function register()
+local function registerListener( event )
 
+    local response = event.response --this is the json file returned from the echo php call
+    print("downloadListener(event) has bee executed")
+    print("event.response == ", response)
+    local decodedStats = json.decode(response)
+    if
+        ((response == "Connection failure" and type(decodedStats) ~= "table") or response == "Connection failure" or
+            response == "Timed out" or
+            event.isError or
+            type(decodedStats) ~= "table")
+    then
+    end
 
+       if type(decodedStats) == "table" then 
+           print( "ID EH "..decodedStats["id"])
+        -- Se cadastro com sucesso , pegar o id para salvar em cache
+       
+       end
 
 end   
 
@@ -119,8 +137,11 @@ local function emailListener( event )
     elseif ( event.phase == "ended" or event.phase == "submitted" ) then
         -- Output resulting text from "defaultField"
         print( event.target.text )
+        
         if( event.target.text =="" ) then
             event.target.text = "Insira seu email"
+        else
+        dataSend["email"] = event.target.text
         end
  
     elseif ( event.phase == "editing" ) then
@@ -143,6 +164,11 @@ local function passListener( event )
     elseif ( event.phase == "ended" or event.phase == "submitted" ) then
         -- Output resulting text from "defaultField"
         print( event.target.text )
+        if( event.target.text =="" ) then
+            event.target.text = "Insira sua senha"
+        else
+        dataSend["pass"] = event.target.text
+        end
  
     elseif ( event.phase == "editing" ) then
         print( event.newCharacters )
@@ -152,7 +178,7 @@ local function passListener( event )
     end
 end
 
-local function listenerRegister( event )
+local function register( event )
  
     if ( "ended" == event.phase ) then
         --code
@@ -162,6 +188,16 @@ local function listenerRegister( event )
             composer.gotoScene("registerProfile", options )
 
         end
+        
+        headers["Content-Type"] = "application/json"
+        headers["X-API-Key"] = "13b6ac91a2"
+        dataSend["email"] = emailField.text
+        dataSend["pass"]  = passField.text
+        params.headers = headers
+        params.body = json.encode(dataSend)
+       network.request("http://10.0.3.248:8080/tradeGame_api/registerUser.php", "POST",  registerListener , params )
+
+
     end
 end
 
@@ -213,7 +249,7 @@ function scene:create( event )
     registerBt =  widget.newButton(   -- customized settings 
     {
         label = "Cadastrar",
-        onEvent = listenerRegister,
+        onEvent = register,
         emboss = false,
         font = native.systemFontBold ,
         fontSize = 25 ,
