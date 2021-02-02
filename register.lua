@@ -50,9 +50,14 @@ time = 500
 
 -- Listeners --
 
-local function geraCache() -- ESTA FUNCIONANDO
+local function atualizaCache() -- ESTA FUNCIONANDO
 
-    --loadsave.saveTable(dados, "cache.json")
+    globalData.id = dadosCache["iduser"]
+    globalData.email = dadosCache["email"]
+    globalData.name  = dadosCache["name"]
+    globalData.pass = dadosCache["pass"]
+    globalData.token = dadosCache["token"]
+    loadsave.saveTable(dadosCache, "cache.json")
 
 end
 
@@ -94,7 +99,7 @@ local function genericNetworkListener( event )
     end
 
        if type(decodedStats) == "table" then 
-          
+          print(decodedStats)
         -- Se cadastro com sucesso , pegar o id para salvar em cache
        
        end
@@ -117,9 +122,26 @@ local function registerListener( event )
     end
 
        if type(decodedStats) == "table" then 
-           print( "ID EH "..decodedStats["id"])
+           if(decodedStats["return"] == 0 )then
+            print( "Esse email já existe" )
+
+           end
+           if(decodedStats["return"] == 1 )then
+           print( "Id eh: "..decodedStats["id"])
+           print( "Token eh: "..decodedStats["token"])
         -- Se cadastro com sucesso , pegar o id para salvar em cache
-       
+        headers2 = {}
+        headers2["Content-Type"] = "application/json"
+        headers2["X-API-Key"] = decodedStats["token"]
+        params2 = {}
+        data2 = {["teste"] ="teste"}
+        params2.headers = headers2
+        params2.body = json.encode(data2)
+        
+        network.request("http://10.0.3.248:8080/tradeGame_api/tests/validToken.php", "POST",  genericNetworkListener , params2 )
+           
+
+           end
        end
 
 end   
@@ -193,6 +215,8 @@ local function register( event )
         headers["X-API-Key"] = "13b6ac91a2"
         dataSend["email"] = emailField.text
         dataSend["pass"]  = passField.text
+        globalData.email = dataSend["email"]
+        globalData.pass = dataSend["pass"]
         params.headers = headers
         params.body = json.encode(dataSend)
        network.request("http://10.0.3.248:8080/tradeGame_api/registerUser.php", "POST",  registerListener , params )
