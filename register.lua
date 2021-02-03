@@ -32,7 +32,8 @@ local registerBt
 local faceBookText
 local facebookButton
 local quad
-dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = ""  }
+dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = "" , ["cached"] = 0 , ["dadosComp"] = 0 }
+local saveCache
 
 local params = {}
 local dataSend = { ["email"] ="" , ["pass"] ="" }
@@ -52,13 +53,25 @@ time = 500
 
 local function atualizaCache() -- ESTA FUNCIONANDO
 
-    globalData.id = dadosCache["iduser"]
-    globalData.email = dadosCache["email"]
-    globalData.name  = dadosCache["name"]
-    globalData.pass = dadosCache["pass"]
-    globalData.token = dadosCache["token"]
-    loadsave.saveTable(dadosCache, "cache.json")
+    dadosCache["iduser"] = globalData.id
+    dadosCache["email"] = globalData.email
+    dadosCache["name"] = globalData.name
+    dadosCache["pass"] = globalData.pass
+    dadosCache["token"] = globalData.token
+    dadosCache["cached"] = globalData.cached
+    dadosCache["dadosComp"] = globalData.dadosComp
+    if ( loadsave.saveTable( dadosCache, "cache.json") ) then
+   
+        display.remove(sceneGroup)
+        composer.removeScene("register")
+        composer.gotoScene("registerProfile", options )
 
+    
+    else
+
+        print("nao")
+
+    end
 end
 
 local function genericNetworkListenerID( event )
@@ -129,7 +142,13 @@ local function registerListener( event )
            if(decodedStats["return"] == 1 )then
            print( "Id eh: "..decodedStats["id"])
            print( "Token eh: "..decodedStats["token"])
+           globalData.id = decodedStats["id"]
+           globalData.token = decodedStats["token"]
+           globalData.cached = 1
+           atualizaCache()
         -- Se cadastro com sucesso , pegar o id para salvar em cache
+
+        --[[
         headers2 = {}
         headers2["Content-Type"] = "application/json"
         headers2["X-API-Key"] = decodedStats["token"]
@@ -139,7 +158,7 @@ local function registerListener( event )
         params2.body = json.encode(data2)
         
         network.request("http://10.0.3.248:8080/tradeGame_api/tests/validToken.php", "POST",  genericNetworkListener , params2 )
-           
+        --]]
 
            end
        end

@@ -13,7 +13,7 @@ print(_H)
   local json = require "json"
   local loadsave = require("loadsave")
   local globalData = require("globalData")
-  dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = "" , ["cached"] = 0 }
+  dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = "" , ["cached"] = 0 , ["dadosComp"] = 0 }
   
   
   local decoded = loadsave.loadTable("cache.json", system.ResourceDirectory )
@@ -53,13 +53,21 @@ end
  
 if (decoded.cached == 0 ) then -- Não foi cacheado vai para cadastro/login
 
+  globalData.id = nil
+  globalData.email =""
+  globalData.name  =""
+  globalData.pass =""
+  globalData.token =""
+  globalData.dadosComp =""
+
   composer.gotoScene("mainTransition")
 
 end
 
 if (decoded.cached == 1 ) then -- Cacheado vai para mainfloor
 
-  --composer.gotoScene("mainTransition")
+  --request to login/autentica
+  composer.gotoScene("mainTransition")
 
 end
 

@@ -1,6 +1,7 @@
 local M = {}
 local json = require("json")
-local _defaultLocation = system.DocumentsDirectory
+--local _defaultLocation = system.DocumentsDirectory
+local _defaultLocation = system.ResourceDirectory
 local _realDefaultLocation = _defaultLocation
 local _validLocations = {
    [system.DocumentsDirectory] = true,
