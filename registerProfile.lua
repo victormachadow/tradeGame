@@ -67,6 +67,11 @@ local function listenerNext( event )
             composer.gotoScene("registerLocation", options )
 
         end
+
+        display.remove(sceneGroup)
+        composer.removeScene("registerProfile")
+        composer.gotoScene("registerLocation", options )
+
     end
 end
 

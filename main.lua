@@ -50,26 +50,9 @@ print(_H)
        composer.gotoScene("mainTransition")
 end
 
+composer.gotoScene("mainTransition")
  
-if (decoded.cached == 0 ) then -- Não foi cacheado vai para cadastro/login
 
-  globalData.id = nil
-  globalData.email =""
-  globalData.name  =""
-  globalData.pass =""
-  globalData.token =""
-  globalData.dadosComp =""
-
-  composer.gotoScene("mainTransition")
-
-end
-
-if (decoded.cached == 1 ) then -- Cacheado vai para mainfloor
-
-  --request to login/autentica
-  composer.gotoScene("mainTransition")
-
-end
 
 --network.request("http://localhost:8080/tradeGame_api/getToken.php", "GET",  genericNetworkListener )
 globalData.devUi = false

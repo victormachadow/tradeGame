@@ -60,6 +60,10 @@
              composer.gotoScene("mainFloor", options )
  
          end
+
+             display.remove(sceneGroup)
+             composer.removeScene("registerProfile")
+             composer.gotoScene("mainFloor", options )
      end
  end
  

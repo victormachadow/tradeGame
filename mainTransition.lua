@@ -7,6 +7,7 @@ local _H = display.contentHeight
   local composer = require("composer")
   local rgb = require "_rgb"
   local globalData = require("globalData")
+  local loadsave = require("loadsave")
 
    -- Vars --
   local sceneGroup = display.newGroup()
@@ -18,6 +19,9 @@ local _H = display.contentHeight
     effect = "slideLeft",
     time = 500
 }
+
+dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = "" , ["cached"] = 0 , ["dadosComp"] = 0 }
+local decoded = loadsave.loadTable("cache.json", system.ResourceDirectory )
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -33,10 +37,31 @@ local _H = display.contentHeight
  
 function exit()
 
-sceneGroup = nil
-composer.removeScene("mainTransition")
---composer.gotoScene("mainFloor", options)
-composer.gotoScene("register", options )
+
+if (decoded.cached == 0 ) then -- Não foi cacheado vai para cadastro/login
+
+    globalData.id = nil
+    globalData.email =""
+    globalData.name  =""
+    globalData.pass =""
+    globalData.token =""
+    globalData.dadosComp =""
+  
+    sceneGroup = nil
+    composer.removeScene("mainTransition")
+    composer.gotoScene("register", options )
+  
+  end
+  
+  if (decoded.cached == 1 ) then -- Cacheado vai para mainfloor
+  
+    --request to login/autentica
+    sceneGroup = nil
+    composer.removeScene("mainTransition")
+    composer.gotoScene("mainFloor")
+  
+  end
+
 
 end   
 

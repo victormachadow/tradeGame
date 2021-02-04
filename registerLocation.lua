@@ -93,6 +93,11 @@ end
              composer.gotoScene("registerPayment", options )
  
          end
+
+         display.remove(sceneGroup)
+         composer.removeScene("registerLocation")
+         composer.gotoScene("registerPayment", options )
+
      end
  end
 
