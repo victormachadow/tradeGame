@@ -9,6 +9,7 @@ local globalData = require("globalData")
 local widget = require("widget")
 local composer = require( "composer" )
 local json = require "json"
+local loadsave = require("loadsave")
 
 -- vars --
 local scene = composer.newScene()
@@ -24,6 +25,11 @@ local titleCardtext
 local amountCardtext
 local cityCardtext
 local stateCardtext
+
+local decoded = loadsave.loadTable("cache.json", system.ResourceDirectory )
+local params = {}
+local dataSend = {}
+local headers = {}
 
 
 -- -----------------------------------------------------------------------------------
@@ -98,9 +104,13 @@ local function genericNetworkListener( event )
     end
 
        if type(decodedStats) == "table" then -- after page downloaded
-          --print("decoded response: "..decodedStats )
+          print("decoded response 1: "..decodedStats[1]["title"] )
           
         
+          for key,value in pairs(decodedStats[1]) do
+            print(key); 
+            print(value);       
+        end
          --After got data go download show scroll view iterating prodListData and downloading images
        
        end
@@ -142,7 +152,12 @@ function scene:create( event )
     quad.alpha = 0.5
     sceneGroup:insert(quad) 
 
-network.request("http://127.0.0.1:8080/tradeGame_api/tests/getListTest.php", "GET",  genericNetworkListener )
+print("TOKEN EH : "..decoded.token)
+        headers["Content-Type"] = "application/json"
+        headers["X-API-Key"] = decoded.token
+        params.headers = headers
+        params.body = json.encode(dataSend)
+network.request("http://127.0.0.1:8080/tradeGame_api/getTopProds.php", "POST",  genericNetworkListener , params )
     
 
 end
