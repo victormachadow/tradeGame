@@ -18,13 +18,16 @@ local bkg
 local quad
 local scrollProds
 local cards = {}
+local cards1 = {}
+local numCards = 0
 -- Comes a 2d array card like [["id","title","amount","city","state"] [..]]
 
  --- cards texts --
-local titleCardtext
-local amountCardtext
-local cityCardtext
-local stateCardtext
+local titleCardtext = {}
+local amountCardtext = {}
+local cityCardtext = {}
+local stateCardtext = {}
+local titleLabel = {}
 
 local decoded = loadsave.loadTable("cache.json", system.ResourceDirectory )
 local params = {}
@@ -72,17 +75,21 @@ end
 
            aux = _H/3.2 --150
            aux2 = 0
-        for i = 1, 10 do
-               cards[i] = display.newRect( centerX  , aux+aux2  , quad.width*0.9 , _H/3.2 )
-               cards[i]:setFillColor( rgb.color( "white" ) )  
+        for i = 1, numCards do
+               cards1[i] = display.newRect( centerX  , aux+aux2  , quad.width*0.9 , _H/3.2 )
+               cards1[i]:setFillColor( rgb.color( "white" ) )  
                --cards[i]:setFillColor( math.random(), math.random(), math.random() )
-               cards[i].alpha = 0.7
-               cards[i].id = i
+               cards1[i].alpha = 0.7
+               cards1[i].id = cards[i]["id"]
                aux2 = _H/3.05
-               aux = cards[i].y
-               cards[i]:addEventListener( "touch", iconListener )
-               scrollProds:insert( cards[i] )       
-               		   
+               aux = cards1[i].y
+               cards1[i]:addEventListener( "touch", iconListener )
+               scrollProds:insert( cards1[i] )
+               titleLabel[i] = display.newRect( centerX  , cards1[i].y - cards1[i].height/2  , quad.width*0.9 , cards1[i].height/5 )
+               titleCardtext[i] = display.newText( cards[i]["title"], cards1[i].x , cards1[i].y - cards1[i].height/2 , native.systemFont, 16 )
+               titleCardtext[i]:setFillColor( rgb.color("black") )       
+               scrollProds:insert( titleLabel[i] )
+               scrollProds:insert( titleCardtext[i] )		   
         end
            sceneGroup:insert( scrollProds )
 
@@ -104,14 +111,26 @@ local function genericNetworkListener( event )
     end
 
        if type(decodedStats) == "table" then -- after page downloaded
-          print("decoded response 1: "..decodedStats[1]["title"] )
-          
-        
-          for key,value in pairs(decodedStats[1]) do
-            print(key); 
-            print(value);       
-        end
+          --print("decoded response 1: "..decodedStats[1]["title"] )
+          local i = 1
+          for i,v in ipairs(decodedStats) do
+            for key,value in pairs(decodedStats[i]) do
+               --print("Array :"..key..value)
+            end
+            cards[i] = decodedStats[i]
+          end
          --After got data go download show scroll view iterating prodListData and downloading images
+
+         local i = 1
+          for i,v in ipairs(cards) do
+            for key,value in pairs(cards[i]) do
+               print("Array :"..key..value)
+               numCards = i
+            end
+           
+          end
+
+          showScrollView()
        
        end
        --[[
