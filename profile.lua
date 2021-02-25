@@ -14,6 +14,8 @@ local loadsave = require("loadsave")
 -- vars --
 local scene = composer.newScene()
 dadosCache = { ["iduser"] = nil , ["email"] = "" , ["name"] = "" , ["pass"] = "" , ["token"] = "" , ["cached"] = 0 , ["dadosComp"] = 0 }
+dadosProfile = {"cached":0,"pass":"","email":"" , "name": "", "cpf":"" ,"paypal": "" , "phone" : 00000000 , "phone2" : 00000000 , "state" : "" ,"city" :"" ,"phone2" :"" ,"cep" :"" ,"adress" : "" ,"number" :"" ,"complement" :"" ,"subscribe" :"" , "evaluation": "" }
+
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
