@@ -37,6 +37,10 @@ local decoded = loadsave.loadTable("cache.json", system.ResourceDirectory )
  
 function exit()
 
+    if (decoded.cached == 0 ) then
+
+
+    end
 
 if (decoded.cached == 0 ) then -- Não foi cacheado vai para cadastro/login
 

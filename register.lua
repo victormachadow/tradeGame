@@ -29,6 +29,7 @@ local stPass
 local emailField
 local passField
 local registerBt
+local loginBt
 local faceBookText
 local facebookButton
 local quad
@@ -219,6 +220,17 @@ local function passListener( event )
     end
 end
 
+ local function login( event )
+
+    if ( "ended" == event.phase ) then
+
+            display.remove(sceneGroup)
+            composer.removeScene("register")
+            composer.gotoScene("login", options )
+
+    end
+ end
+
 local function register( event )
  
     if ( "ended" == event.phase ) then
@@ -308,6 +320,27 @@ function scene:create( event )
 registerBt.x = centerX 
 registerBt.y = passField.y + (passField.height + 30 )
 sceneGroup:insert(registerBt)
+
+loginBt =  widget.newButton(   -- customized settings 
+{
+    label = "Já tenho conta",
+    onEvent = login,
+    emboss = false,
+    font = native.systemFontBold ,
+    fontSize = 25 ,
+    -- Properties for a rounded rectangle button
+    shape = "rect",
+    width = 300,
+    height = 80,
+    fillColor = { default= { rgb.color( "black" ) } , over = { rgb.color( "gray" ) } },
+    labelColor = { default= { rgb.color( "white" ) } , over = { rgb.color( "white" ) } }
+    
+}
+)
+
+loginBt.x = centerX 
+loginBt.y = registerBt.y + (registerBt.height + 30 )
+sceneGroup:insert(loginBt)
 
  
 

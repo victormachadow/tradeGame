@@ -17,8 +17,9 @@ print(_H)
   
   
   local decoded = loadsave.loadTable("cache.json", system.ResourceDirectory )
-  print(decoded.cached)
+  
   if(decoded == nil )then
+    print("é nil")
     loadsave.saveTable(dadosCache, "cache.json")
   end
 
@@ -50,7 +51,10 @@ print(_H)
        composer.gotoScene("mainTransition")
 end
 
-composer.gotoScene("mainTransition")
+timer.performWithDelay( 1000,function()
+  composer.gotoScene("mainTransition")
+end , 1 )
+
  
 
 
